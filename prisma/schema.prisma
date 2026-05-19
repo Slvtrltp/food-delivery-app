@@ -11,3 +11,69 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Food {
+  id             String          @id
+  foodNAme       String
+  price          Int
+  image          String
+  ingredients    String
+  category       FoodCategory    @relation(fields: [foodCategoryId], references: [id])
+  foodCategoryId String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @default(now())
+  foodOrderItems FoodOrderItem[]
+}
+
+model FoodCategory {
+  id           String   @id @default(nanoid())
+  categoryName String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now())
+  food         Food[]
+}
+
+model FoodOrder {
+  id             String          @id @default(nanoid())
+  userId         String
+  user           User            @relation(fields: [userId], references: [id])
+  totalPrice     Float
+  status         FoodOrderStatus @default(PENDING)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  foodOrderItems FoodOrderItem[]
+}
+
+model User {
+  id          String      @id @default(nanoid())
+  email       String      @unique
+  password    String
+  phoneNumber String
+  address     String
+  role        UserRole    @default(USER)
+  ttl         DateTime?
+  isVerified  Boolean
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @default(now())
+  foodOrders  FoodOrder[]
+}
+
+enum FoodOrderStatus {
+  PENDING
+  CANCELED
+  DELIVERED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model FoodOrderItem {
+  id       String    @id @default(uuid())
+  orderId  String
+  order    FoodOrder @relation(fields: [orderId], references: [id])
+  foodId   String
+  food     Food      @relation(fields: [foodId], references: [id])
+  quantity Int
+}
