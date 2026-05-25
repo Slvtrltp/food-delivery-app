@@ -1,8 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
-import { TextField } from "../components/TextField";
+import React, { FormEvent, useContext, useEffect, useState } from "react";
+import { TextField } from "../components/TextFieldd";
 import { StepProps } from "./page";
 import Link from "next/link";
-import { UserContext } from "../context/UserContext";
 import { useRouter } from "next/router";
 
 export const SecondStep = ({
@@ -12,9 +11,11 @@ export const SecondStep = ({
   setForm,
   setError,
 }: StepProps) => {
-  const [showPassword, setShowPassword] = useState(false);
-  const { user, setUser } = useContext(UserContext); // 👈 Context дуудах
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  const [status, setStatus] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
   const isPasswordValid = (password: string) => {
     if (password === "") return "Нууц үгээ оруулна уу!";
     if (
@@ -47,39 +48,11 @@ export const SecondStep = ({
 
     return hasPasswordError || hasConfirmError;
   };
-  useEffect(() => {
-    if (user) {
-      router.push("/");
-    }
-  }, [user, router]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-
-    try {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: form.email, password: form.password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // 1. Хөтөч дээр токеныг хадгалах
-        localStorage.setItem("token", data.token);
-        // 2. Төв агуулах буюу Context-ийг шинэчлэх (Ингэснээр Header шууд өөрчлөгдөнө)
-        setUser(data.user);
-        // 3. Homepage рүү үсрэх
-        router.push("/");
-      } else {
-        alert(data.error || "Бүртгэхэд алдаа гарлаа");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Сүлжээний алдаа гарлаа");
-    }
-  };
+    setLoading(true);
+    setStatus(null);
+  }
   return (
     <div className=" container ">
       <form onSubmit={handleSubmit} className=" flex items-center mt-20 gap-10">
