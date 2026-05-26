@@ -47,12 +47,11 @@ model FoodOrder {
 model User {
   id          String      @id @default(nanoid())
   email       String      @unique
-  password    String
   phoneNumber String?
-  address     String
+  address     String?
   role        UserRole    @default(USER)
   ttl         DateTime?
-  isVerified  Boolean
+  otp          String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @default(now())
   foodOrders  FoodOrder[]

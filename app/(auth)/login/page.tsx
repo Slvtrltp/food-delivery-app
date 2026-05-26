@@ -1,57 +1,68 @@
-import Link from "next/link";
-import { AuthFooter, AuthHeader } from "../../components/auth-layout";
-import {
-  PasswordField,
-  SubmitButton,
-  TextField,
-} from "../../components/auth-form";
+"use client";
+import { AuthFooter, AuthHeader } from "@/app/components/auth-layout";
+import { SubmitButton, TextField } from "@/app/components/auth-form";
+import { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
 
-export const metadata = {
-  title: "Log in — NomNom",
-};
-
-export default function LoginPage() {
+export default function SignupPage() {
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const isEmailValid = (email: string) => {
+    if (email === "") return "И-мэйлээ оруулна уу!";
+    if (!regex.test(email)) {
+      return "И-мэйл буруу форматтай байна.";
+    }
+    return "";
+  };
+  const handleSubmitForm = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    const emailError = isEmailValid(email);
+    if (emailError) {
+      setError(emailError);
+      return;
+    }
+    setError("");
+    setLoading(true);
+    axios
+      .post("/api/auth", { email })
+      .then((res) => {
+        setLoading(false);
+        alert(res.data.message);
+        router.push(`/login/otp?email=${email}`);
+      })
+      .catch(({ response }) => {
+        alert(response.message);
+      });
+  };
   return (
     <>
       <AuthHeader
-        title="Welcome back"
-        subtitle="Log in to keep ordering your favorite dishes."
+        title="Create your account"
+        subtitle="Sign up to explore your favorite dishes"
       />
-
-      <form
-        className="flex flex-col gap-4"
-        action="/api/auth/login"
-        method="post"
-      >
+      <form className=" space-y-4" onSubmit={handleSubmitForm}>
         <TextField
           id="email"
-          label="Email"
           type="email"
           placeholder="Enter your email address"
-          autoComplete="email"
           required
+          onChange={(e) => {
+            setEmail(e.target.value);
+          }}
+          value={email}
+          error={error}
         />
-        <PasswordField
-          id="password"
-          label="Password"
-          placeholder="Password"
-          autoComplete="current-password"
-        />
-        <div className="flex justify-end">
-          <Link
-            href="/forgot-password"
-            className="text-sm text-[#2563eb] hover:underline"
-          >
-            Forgot password?
-          </Link>
-        </div>
-        <SubmitButton>{"Let's Go"}</SubmitButton>
-      </form>
 
+        <SubmitButton loading={loading}>{"Let's Go"}</SubmitButton>
+      </form>
       <AuthFooter
-        prompt="Don't have an account?"
-        linkText="Sign up"
-        linkHref="/signup"
+        prompt="Already have an account?"
+        linkHref="/login"
+        linkText="log in"
       />
     </>
   );
