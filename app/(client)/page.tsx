@@ -1,9 +1,9 @@
-import { FoodSection } from "../components/FoodSection";
-import Footer from "../components/Footer";
-import { Header } from "../components/Header";
+"use client";
 import Hero from "../components/Hero";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+import { FoodSection } from "../components/FoodSection";
+
+export default function Home() {
   return (
     <>
       <Hero />

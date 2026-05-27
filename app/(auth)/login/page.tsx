@@ -3,7 +3,7 @@ import { AuthFooter, AuthHeader } from "@/app/components/auth-layout";
 import { SubmitButton, TextField } from "@/app/components/auth-form";
 import { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -35,7 +35,8 @@ export default function SignupPage() {
         router.push(`/login/otp?email=${email}`);
       })
       .catch(({ response }) => {
-        alert(response.message);
+        alert(response.message || "Алдаа гарлаа");
+        setLoading(false);
       });
   };
   return (

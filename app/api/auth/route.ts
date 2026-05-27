@@ -4,12 +4,6 @@ import jwt from "jsonwebtoken";
 import { Resend } from "resend";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-resend.emails.send({
-  from: "onboarding@resend.dev",
-  to: "gnomin200408@gmail.com",
-  subject: "Hello World",
-  html: "<p>Congrats on sending your <strong>first email</strong>!</p>",
-});
 const generateOtp = () => {
   return Math.floor(Math.random() * 9000) + 1000;
 };
@@ -44,7 +38,7 @@ export const POST = async (req: NextRequest) => {
       },
     });
   }
-  resend.emails.send({
+  await resend.emails.send({
     from: "noreply@resend.dev",
     to: body.email,
     subject: "Таны нэг удаагийн нэвтрэх код",

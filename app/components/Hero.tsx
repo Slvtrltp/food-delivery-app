@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
 
-const Hero = () => {
+export const Hero = () => {
   return (
     <div className="w-full bg-white">
       <img

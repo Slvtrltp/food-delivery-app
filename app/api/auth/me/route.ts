@@ -10,7 +10,7 @@ export const GET = async (req: NextRequest) => {
 
   try {
     const payload = jwt.verify(token, "My-JWT-Secret");
-    return NextResponse.json(payload);
+    return NextResponse.json({ message: "Success!", user: payload });
   } catch {
     return NextResponse.json({ message: "Token expired" }, { status: 401 });
   }

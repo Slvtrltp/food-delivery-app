@@ -2,17 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { Resend } from "resend";
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-resend.emails.send({
-  from: "onboarding@resend.dev",
-  to: "gnomin200408@gmail.com",
-  subject: "Hello World",
-  html: "<p>Congrats on sending your <strong>first email</strong>!</p>",
-});
-const generateOtp = () => {
-  return Math.floor(Math.random() * 9000) + 1000;
-};
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
@@ -28,11 +17,13 @@ export const POST = async (req: NextRequest) => {
   }
   const user = await prisma.user.findUnique({ where: { email: body.email } });
   const otpRegex = /\d{4}/;
-  if (!regex.test(body.otp)) {
+
+  if (!otpRegex.test(body.otp)) {
     return NextResponse.json({ message: "Invalid OTP" }, { status: 400 });
   }
+
   if (!user) {
-    return NextResponse.json({ message: "User not found" }, { status: 400 });
+    return NextResponse.json({ message: "Email not found" }, { status: 404 });
   }
   try {
     const payload = jwt.verify(user.otp!, "SIGNING-OTP") as { otp: string };
