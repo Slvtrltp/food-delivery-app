@@ -5,6 +5,8 @@ type Props = {
 };
 
 export const FoodSection = ({ label }: Props) => {
+  // const [isOpen, setIsOpen] = useState("");
+
   return (
     <div className="space-y-3 container pt-10">
       <div className="text-[30px] font-semibold text-center">{label}</div>

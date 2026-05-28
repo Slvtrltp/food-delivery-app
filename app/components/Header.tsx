@@ -3,7 +3,7 @@ import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { useUser } from "../user-provider";
 import { Logo } from "./auth-form";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
   const { user, logout } = useUser();
@@ -51,22 +51,24 @@ export const Header = () => {
                       {"Add location"}
                     </span>
                   </p>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 20 20"
-                    fill="none"
-                  >
-                    <path
-                      d="M7.5 15L12.5 10L7.5 5"
-                      stroke="#18181B"
-                      strokeOpacity="0.5"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                    >
+                      <path
+                        d="M7.5 15L12.5 10L7.5 5"
+                        stroke="#18181B"
+                        strokeOpacity="0.5"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
                 </div>
                 <div className="py-2 px-2.5 bg-white rounded-4xl flex justify-center items-center">
                   <svg
@@ -84,7 +86,10 @@ export const Header = () => {
                     />
                   </svg>
                 </div>
-                <div className="py-2 px-2.5 bg-[#448A5B] rounded-4xl flex justify-center items-center">
+                <div
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="py-2 px-2.5 bg-[#448A5B] rounded-4xl flex justify-center items-center "
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -99,6 +104,17 @@ export const Header = () => {
                       strokeLinejoin="round"
                     />
                   </svg>
+                  {isOpen && (
+                    <div className="absolute top-20 flex flex-col justify-center items-center w-60 h-20 rounded-lg bg-white shadow-lime-200 z-10 transition-all duration-500 ease-in-out border border border-green-100">
+                      <ul className="text-[14px] ">{user.email}</ul>
+                      <ul
+                        onClick={handleSignOut}
+                        className="text-[#448A5B] cursor-pointer transition-all duration-200 hover:opacity-80"
+                      >
+                        Sign out
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
