@@ -42,28 +42,30 @@ export const UserProvider = () => {
     }
   }, []);
   useEffect(() => {
-    if (accessToken) {
-      axios
-        .get("/api/auth/me", {
-          headers: {
-            Authorization: "Bearer " + accessToken,
-          },
-        })
-        .then((res) => {
-          setUser(res.data.user);
-          setLoading(false);
-          localStorage.setItem("accessToken", accessToken);
-        })
-        .catch(({ response }) => {
-          localStorage.removeItem("accessToken");
+    if (!accessToken) return;
+
+    setLoading(true);
+    axios
+      .get("/api/auth/me", {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      })
+      .then((res) => {
+        setUser(res.data.user);
+      })
+      .catch(({ response }) => {
+        localStorage.removeItem("accessToken");
+        if (response?.data?.message) {
           alert(response.data.message);
-          setUser(null);
-          setAccessToken("");
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
+        }
+        setUser(null);
+        setAccessToken("");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [accessToken]);
+
   return null;
 };
